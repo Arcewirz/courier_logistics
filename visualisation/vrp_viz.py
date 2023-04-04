@@ -34,8 +34,13 @@ class VRPPlot():
         
         plot = folium.Map(location=center, 
                           tiles="Stamen Terrain")
-        
-        for loc in self.coords:
+
+        folium.Marker(
+            location=self.coords[0],
+            icon=folium.Icon(icon='play', color='green')
+        ).add_to(plot)
+
+        for loc in self.coords[1:-1]:
             folium.Marker(loc) \
             .add_to(plot)
             
@@ -43,6 +48,11 @@ class VRPPlot():
             folium.PolyLine([self.coords[index] for index in trail],
                             color = random_color()) \
             .add_to(plot)
+
+        folium.Marker(
+            location=self.coords[-1],
+            icon=folium.Icon(icon='stop', color='red')
+        ).add_to(plot)
         
         plot.fit_bounds((sw, ne))
         return plot
