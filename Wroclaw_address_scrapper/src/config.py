@@ -10,8 +10,13 @@ class Urls:
 @dataclass
 class Selectors:
     """Selectors used"""
-    street_list ='#id27 > ul > li'
+    street_list ='.list-group.list-group-flush > li'
     street = "a"
-    address_list = ""
+    address_div = "#bodyId > div.app-layout > main > div > div:nth-child(4) > div \
+        > div.row > div > div > div.card.mb-4.box-shadow-lg > div.row.border-top > \
+        div.col-12.col-lg-6.border-right > div > div"
+    address_list = "#bodyId > div.app-layout > main > div > div:nth-child(4) > div \
+        > div.row > div > div > div.card.mb-4.box-shadow-lg > div.row.border-top > \
+        div.col-12.col-lg-6.border-right > div > div > a"
     address = ""
-    next_page = ""
+    next_page = 'a[title="Idź do następnej strony"]'
