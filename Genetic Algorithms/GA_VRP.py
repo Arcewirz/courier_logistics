@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 
 from src import *
 
-
 # implements the Genetic Algorithm
 def ga_solve():
     curr_population = gen_population()
