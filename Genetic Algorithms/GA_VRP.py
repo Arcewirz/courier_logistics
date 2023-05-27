@@ -1,12 +1,11 @@
 import random, time
 
 from src import *
-from test_data import *
 
 
 # implements the Genetic Algorithm
-def ga_solve():
-    curr_population = gen_population()
+def ga_solve(data_generation_method, *args, **kwargs):
+    curr_population = gen_population(data_generation_method, *args, **kwargs)
     for chrom in curr_population:
         evaluate_fitness(chrom)
 
@@ -43,10 +42,10 @@ if __name__ == '__main__':
 
     for i in range(0, NO_EXPERIMENT_ITERATIONS):
         start_time = time.time()
-        chromosome = ga_solve()
+        chromosome = ga_solve(create_dataframe_points)
         end_time = time.time()
 
-        costs_i = calculate_path_costs(chromosome)
+        costs_i, data_matrix = calculate_path_costs(chromosome)
         print_cost(costs_i, i + 1, end_time - start_time)
         print_phenotype(chromosome)
         total_cpu_time += end_time - start_time

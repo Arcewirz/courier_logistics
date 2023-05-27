@@ -1,4 +1,4 @@
-import json, os, random, time
+import json, os, random
 import numpy as np
 import pandas as pd
 from geopy.geocoders import Nominatim

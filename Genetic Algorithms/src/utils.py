@@ -9,6 +9,7 @@ import pandas as pd
 
 from src.algorithms import *
 from src.constants import *
+from src.test_data import *
 
 
 @dataclass
@@ -18,23 +19,24 @@ class Chromosome:
     fitness: int = 0
 
 
-# generates a single chromosome
-def gen_chromosome(orders):
-    # generates a random sequence of customers and a corresponding array which vehicle stops at this customer
-    random.shuffle(orders)
-    _vehicles = []
-    for _ in range(0, len(orders)):
-        _vehicles.append(random.randint(0, NO_VEHICLES))
-
-    return Chromosome(orders.copy(), _vehicles.copy())
-
-
 # generates the initial population
-def gen_population():
+def gen_population(data_generation_method, *args, **kwargs):
+    data = data_generation_method(*args, **kwargs)
     _chromosomes = []
     for _ in range(0, POPULATION_SIZE):
-        _chromosomes.append(gen_chromosome())
+        _chromosomes.append(_gen_chromosome(data))
     return _chromosomes
+
+
+# generates a single chromosome
+def _gen_chromosome(data):
+    # generates a random sequence of customers and a corresponding array which vehicle stops at this customer
+    random.shuffle(data)
+    _vehicles = []
+    for _ in range(0, len(data)):
+        _vehicles.append(random.randint(0, NO_VEHICLES))
+
+    return Chromosome(data.copy(), _vehicles.copy())
 
 
 # returns the best chromosome in a population
@@ -73,15 +75,11 @@ def calculate_distance_matrix_geopy(coords: list[tuple]):
     
     return distance_matrix, coords
 
-
-#  Choose one
-distance_matrix, data_matrix = calculate_map_context(coords)
-# distance_matrix, data_matrix = calculate_distance_matrix_geopy(coords)
-
 # calculate the path_costs
-def calculate_path_costs(c: Chromosome):
+def calculate_path_costs(c: Chromosome, calculate_distance, *args, **kwargs):
     path_costs = [0] * NO_VEHICLES
     prev_stop = [0] * NO_VEHICLES
+    distance_matrix, data_matrix = calculate_distance(*args, **kwargs)
 
     for i in range(0, len(c.vehicles)):
         stop = c.stops[i]  # the current stop
@@ -95,7 +93,7 @@ def calculate_path_costs(c: Chromosome):
         return_dist = distance_matrix[prev_stop[i]][0]
         path_costs[i] += return_dist
 
-    return path_costs
+    return path_costs, data_matrix
 
 
 # calculates the distance based on euclidean metric measurement
@@ -111,7 +109,7 @@ def print_cost(costs, iteration, runtime):
 
 # shows the phenotype of a chromosome
 def print_phenotype(c: Chromosome):
-    path_costs = calculate_path_costs(c)
+    path_costs = calculate_path_costs(c)[1]
     print("The total costs of the paths are:", "{:.2f}".format(sum(path_costs)))
 
     for i in range(0, NO_VEHICLES):
@@ -126,7 +124,8 @@ def print_phenotype(c: Chromosome):
 def plot_map(c: Chromosome, data):
     x_data = [d[0] for d in data]
     y_data = [d[1] for d in data]
-    colors = ["tab:blue", "tab:orange", "tab:green"]
+    colors = ["#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+             for _ in range(NO_VEHICLES)]
     routes = []
 
     for i in range(0, NO_VEHICLES):
@@ -155,13 +154,10 @@ def plot_map(c: Chromosome, data):
 
 
 __all__ = [
-    "Chromosome", 
-    "gen_chromosome", 
+    "Chromosome",  
     "gen_population", 
     "get_best_chromosome",
-    "calculate_map_context",
-    "distance_matrix", 
-    "data_matrix",
+    "calculate_map_context", 
     "calculate_path_costs",
     "calc_dist",
     "print_cost",
