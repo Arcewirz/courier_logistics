@@ -1,6 +1,6 @@
 import random
 
-# select the parent using the roulette wheel selection
+# select parent using the roulette wheel selection
 def select_parent(chromosomes):
     total_fitness = 0
     chroms_fitness = []

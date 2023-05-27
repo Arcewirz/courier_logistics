@@ -1,7 +1,8 @@
 import random, time
-import matplotlib.pyplot as plt
 
 from src import *
+from test_data import *
+
 
 # implements the Genetic Algorithm
 def ga_solve():

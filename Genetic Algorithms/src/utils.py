@@ -1,9 +1,11 @@
-import csv, math, sys
+import math, sys, time
 import random
 from typing import List
 
 from dataclasses import dataclass, field
+from geopy.distance import geodesic
 import matplotlib.pyplot as plt
+import pandas as pd
 
 from src.algorithms import *
 from src.constants import *
@@ -17,21 +19,20 @@ class Chromosome:
 
 
 # generates a single chromosome
-def gen_chromosome():
+def gen_chromosome(orders):
     # generates a random sequence of customers and a corresponding array which vehicle stops at this customer
-    _stops = list(range(0, 45))
-    random.shuffle(_stops)
+    random.shuffle(orders)
     _vehicles = []
-    for i in range(0, len(_stops)):
-        _vehicles.append(random.randint(0, 2))
+    for _ in range(0, len(orders)):
+        _vehicles.append(random.randint(0, NO_VEHICLES))
 
-    return Chromosome(_stops.copy(), _vehicles.copy())
+    return Chromosome(orders.copy(), _vehicles.copy())
 
 
 # generates the initial population
 def gen_population():
     _chromosomes = []
-    for i in range(0, POPULATION_SIZE):
+    for _ in range(0, POPULATION_SIZE):
         _chromosomes.append(gen_chromosome())
     return _chromosomes
 
@@ -47,15 +48,8 @@ def get_best_chromosome(population):
     return best_chrom
 
 
-# creates the distance matrix
-def calculate_map_context():
-    file = open("data.csv")
-    csvreader = csv.reader(file)
-    next(csvreader)  # skip header
-    rows = []
-    for row in csvreader:
-        rows.append(list(map(int, row)))
-
+# creates the distance matrix from order's addresses
+def calculate_map_context(rows: list[tuple]):
     _dist_matrix = []
     for i in range(0, len(rows)):
         row = [0] * len(rows)
@@ -73,8 +67,16 @@ def calculate_map_context():
     return _dist_matrix, rows
 
 
-distance_matrix, data_matrix = calculate_map_context()
+def calculate_distance_matrix_geopy(coords: list[tuple]):
+    distance_matrix = [[geodesic(from_coord, to_coord).km for to_coord in coords] 
+                         for from_coord in coords]
+    
+    return distance_matrix, coords
 
+
+#  Choose one
+distance_matrix, data_matrix = calculate_map_context(coords)
+# distance_matrix, data_matrix = calculate_distance_matrix_geopy(coords)
 
 # calculate the path_costs
 def calculate_path_costs(c: Chromosome):
@@ -122,8 +124,8 @@ def print_phenotype(c: Chromosome):
 
 # plot the routes of the vehicles of a chromosome as a map
 def plot_map(c: Chromosome, data):
-    x_data = [d[2] for d in data]
-    y_data = [d[3] for d in data]
+    x_data = [d[0] for d in data]
+    y_data = [d[1] for d in data]
     colors = ["tab:blue", "tab:orange", "tab:green"]
     routes = []
 
