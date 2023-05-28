@@ -8,8 +8,8 @@ def create_dataframe_points(xy_from=0, xy_to = 50, num_points = 175):
     """ Function for generation sample data on 2D space.
 
         Returns:
-            list:  two lists of tuples.
-                First constains only x and y, second contains x, y and weight of parcel.
+            list: two lists of tuples.
+            First constains only x and y, second contains x, y and weight of parcel.
     """
     data = np.random.uniform(xy_from, xy_to, size=(num_points,2))
     depot = np.array([xy_to/2, xy_to/2])
@@ -32,7 +32,7 @@ def create_dataframe_points(xy_from=0, xy_to = 50, num_points = 175):
             [(float(df.loc[index, 'x']), float(df.loc[index, 'y']), float(df.loc[index, 'weight'])) for index, rowb in df.iterrows()]]
 
 
-def create_order_coords(num_points = 175):
+def create_random_addresses(num_points = 175):
     """ Generates data for the problem. 
     
     Args:
@@ -64,13 +64,11 @@ def read_coords_geopy(address_list):
 
     df = pd.DataFrame({"lat": [],
                        "lon": []})
-
-    address_list = [x.strip("ul. ") for x in address_list]
-    address_list = [x + ", Wrocław, Poland" for x in address_list]
-    location = [app.geocode(address) for address in address_list]
     
-    for i in range(len(location)):
-        df.loc[len(df.index)] = [location[i][1][0], location[i][1][1]]
+    locations = [app.geocode(address) for address in address_list]
+
+    for i in range(len(locations)):
+        df.loc[len(df.index)] = [locations[i][1][0], locations[i][1][1]]
 
     return [(float(df.loc[index, 'lat']), float(df.loc[index, 'lon']))
             for index, rowb in df.iterrows()]
@@ -78,7 +76,7 @@ def read_coords_geopy(address_list):
 
 __all__ = [
     "create_dataframe_points",
-    "create_order_coords",
+    "create_random_addresses",
     "read_coords_geopy",
 ]
 
