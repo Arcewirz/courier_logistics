@@ -59,11 +59,11 @@ def calculate_map_context(rows: list[tuple]):
 
     for i in range(0, len(rows)):
         for j in range(i, len(rows)):
-            start_x = rows[i][2]
-            start_y = rows[i][3]
-            end_x = rows[j][2]
-            end_y = rows[j][3]
-            dist = calc_dist(start_x, start_y, end_x, end_y)
+            start_x = rows[i][0]
+            start_y = rows[i][1]
+            end_x = rows[j][0]
+            end_y = rows[j][1]
+            dist = _calc_dist(start_x, start_y, end_x, end_y)
             _dist_matrix[i][j] = dist
             _dist_matrix[j][i] = dist
     return _dist_matrix, rows
@@ -75,11 +75,11 @@ def calculate_distance_matrix_geopy(coords: list[tuple]):
     
     return distance_matrix, coords
 
-# calculate the path_costs
+
 def calculate_path_costs(c: Chromosome, calculate_distance, *args, **kwargs):
     path_costs = [0] * NO_VEHICLES
     prev_stop = [0] * NO_VEHICLES
-    distance_matrix, data_matrix = calculate_distance(*args, **kwargs)
+    distance_matrix, data_matrix = calculate_distance(*args, **kwargs) 
 
     for i in range(0, len(c.vehicles)):
         stop = c.stops[i]  # the current stop
@@ -97,7 +97,7 @@ def calculate_path_costs(c: Chromosome, calculate_distance, *args, **kwargs):
 
 
 # calculates the distance based on euclidean metric measurement
-def calc_dist(x1, y1, x2, y2):
+def _calc_dist(x1, y1, x2, y2):
     return math.sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2))
 
 
@@ -108,8 +108,8 @@ def print_cost(costs, iteration, runtime):
 
 
 # shows the phenotype of a chromosome
-def print_phenotype(c: Chromosome):
-    path_costs = calculate_path_costs(c)[1]
+def print_phenotype(c: Chromosome, calculate_distance, *args, **kwargs):
+    path_costs = calculate_path_costs(c, calculate_distance, *args, **kwargs)[0]
     print("The total costs of the paths are:", "{:.2f}".format(sum(path_costs)))
 
     for i in range(0, NO_VEHICLES):
@@ -158,8 +158,8 @@ __all__ = [
     "gen_population", 
     "get_best_chromosome",
     "calculate_map_context", 
+    "calculate_distance_matrix_geopy",
     "calculate_path_costs",
-    "calc_dist",
     "print_cost",
     "print_phenotype",
     "plot_map",

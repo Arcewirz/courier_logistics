@@ -2,8 +2,9 @@ from ..utils import *
 from ..constants import *
 
 # calculates the fitness of a chromosome, the higher the fitness the better is the chromosome
-def evaluate_fitness(c: Chromosome):
-    path_costs = calculate_path_costs(c)
+def evaluate_fitness(c: Chromosome, calculate_distance, *args, **kwargs):
+
+    path_costs = calculate_path_costs(c, calculate_distance, *args, **kwargs)[0]
 
     total_fitness = 0
     for i in range(0, len(path_costs)):

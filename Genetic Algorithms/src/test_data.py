@@ -1,4 +1,4 @@
-import json, os, random
+import os, random, yaml
 import numpy as np
 import pandas as pd
 from geopy.geocoders import Nominatim
@@ -43,12 +43,12 @@ def create_random_addresses(num_points = 175):
     """
     os.chdir('..')
     os.chdir('Data')
-    f = open('data.json', encoding="utf8")
-    # returns JSON object as a dictionary
-    data = json.load(f)
+    with open("data.yaml", 'r', encoding='utf-8') as f:
+        data = yaml.safe_load(f, )
 
-    street = random.choices(list(data.items()), k=num_points)
-    return [i[0] + ' ' + random.choice(i[1]) for i in street]
+    orders = random.choices(data, k=num_points)
+
+    return read_coords_geopy(orders)
 
 
 def read_coords_geopy(address_list):
@@ -60,7 +60,8 @@ def read_coords_geopy(address_list):
     Returns:
         list: list of tuples that contains coordinates of order
     """
-    app = Nominatim(user_agent="tmp")
+    user_agent = 'user_me_{}'.format(random.randint(10000,99999))
+    app = Nominatim(user_agent=user_agent)
 
     df = pd.DataFrame({"lat": [],
                        "lon": []})
