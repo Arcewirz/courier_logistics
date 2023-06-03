@@ -23,19 +23,19 @@ def ga_solve(calculate_distance_method, curr_population):
         src.evaluate_fitness(chrom, calculate_distance_method)
 
     for _ in range(0, src.NO_GENERATIONS):
-        # for _ in range(0, src.POPULATION_SIZE):
-        new_population = []
-        parent1 = src.select_parent(curr_population)
+        for _ in range(0, src.POPULATION_SIZE):
+            new_population = []
+            parent1 = src.select_parent(curr_population)
 
-        if random.uniform(0, 1) < src.CROSSOVER_RATE:
-            parent2 = src.select_parent(curr_population)
-            child = src.do_crossover(parent1, parent2, calculate_distance_method)
-        else:
-            child = parent1
+            if random.uniform(0, 1) < src.CROSSOVER_RATE:
+                parent2 = src.select_parent(curr_population)
+                child = src.do_crossover(parent1, parent2, calculate_distance_method)
+            else:
+                child = parent1
 
-        src.do_mutation(child, calculate_distance_method)
-        src.evaluate_fitness(child, calculate_distance_method)
-        new_population.append(child)
+            src.do_mutation(child, calculate_distance_method)
+            src.evaluate_fitness(child, calculate_distance_method)
+            new_population.append(child)
 
     if src.KEEP_BEST:
         best = src.get_best_chromosome(curr_population)

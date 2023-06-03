@@ -2,9 +2,10 @@ import os, random, yaml
 import numpy as np
 import pandas as pd
 from geopy.geocoders import Nominatim
+from .constants import *
 
 
-def create_dataframe_points(xy_from=0, xy_to = 50, num_points = 175):
+def create_dataframe_points(xy_from=0, xy_to = 50, num_points = POPULATION_SIZE):
     """ Function for generation sample data on 2D space for VRP.
 
         Returns:
@@ -22,7 +23,7 @@ def create_dataframe_points(xy_from=0, xy_to = 50, num_points = 175):
     return [(float(df.loc[index, 'x']), float(df.loc[index, 'y'])) for index, rowb in df.iterrows()]
 
 
-def create_dataframe_weighted_points(xy_from=0, xy_to = 50, num_points = 175):
+def create_dataframe_weighted_points(xy_from=0, xy_to = 50, num_points = POPULATION_SIZE):
     """ Function for generation sample data on 2D space for CVRP.
 
         Returns:
@@ -48,7 +49,7 @@ def create_dataframe_weighted_points(xy_from=0, xy_to = 50, num_points = 175):
     return [(float(df.loc[index, 'x']), float(df.loc[index, 'y']), float(df.loc[index, 'weight'])) for index, rowb in df.iterrows()]
 
 
-def create_random_addresses(num_points = 175):
+def create_random_addresses(num_points = POPULATION_SIZE):
     """ Generates data for the problem. 
     
     Args:

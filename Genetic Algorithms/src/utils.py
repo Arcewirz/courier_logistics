@@ -146,7 +146,7 @@ def plot_map(c: Chromosome, data_matrix):
         for j in routes[i]:
             x_points.append(j[0])
             y_points.append(j[1])
-        plt.plot(x_points, y_points, label="Route" + str(i + 1), marker='o', color=colors[i])
+        plt.plot(x_points, y_points, label="Route" + str(i + 1), marker='o', color= random.choice(list(mcolors.CSS4_COLORS.keys())))
         plt.plot(x_points[:1], y_points[:1], color= random.choice(list(mcolors.CSS4_COLORS.keys())), linestyle="--")
         plt.plot(x_points[-1:], y_points[-1:], color = random.choice(list(mcolors.CSS4_COLORS.keys())), linestyle="--")
 
