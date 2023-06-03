@@ -69,7 +69,7 @@ if __name__ == '__main__':
         end_time = time.time()
 
         # punkty w 2D
-        costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_distance_matrix_dataframe_points, curr_population)
+        costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_distance_matrix_dataframe_points)
         # # adresy w geopy
         # costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_distance_matrix_geopy, curr_population)
         

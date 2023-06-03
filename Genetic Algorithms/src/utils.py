@@ -75,9 +75,6 @@ def calculate_distance_matrix_geopy(chrom: Chromosome):
     
     return distance_matrix, coords
 
-#
-# dodać funkcje która pokaże koszt dla każdego samochodu
-#
 
 def calculate_path_costs(c: Chromosome, calculate_distance_method):
     path_costs = [0] * (NO_VEHICLES + 1)
@@ -109,6 +106,12 @@ def print_cost(costs, iteration, runtime):
     print("Iteration: ", iteration, " runtime: ", "{:.4f}".format(runtime), ", costs: ", "{:.2f}".format(sum(costs)), sep="")
     return sum(costs)
 
+
+# print costs of every courier in a single iteration of the best chromosome
+def print_single_vehicle_cost(path_cost):
+    for i, distance in enumerate(path_cost[1:]):
+        print(f"Vehicle {i+1}: {distance} km.")
+        
 
 # shows the phenotype of a chromosome
 def print_phenotype(c: Chromosome, calculate_distance, *args, **kwargs):
