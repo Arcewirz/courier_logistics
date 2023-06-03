@@ -5,6 +5,7 @@ from typing import List
 from dataclasses import dataclass, field
 from geopy.distance import geodesic
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 import numpy as np
 import pandas as pd
 
@@ -114,8 +115,8 @@ def print_single_vehicle_cost(path_cost):
         
 
 # shows the phenotype of a chromosome
-def print_phenotype(c: Chromosome, calculate_distance, *args, **kwargs):
-    path_costs = calculate_path_costs(c, calculate_distance, *args, **kwargs)[0]
+def print_phenotype(c: Chromosome, calculate_distance):
+    path_costs = calculate_path_costs(c, calculate_distance)[0]
     print("The total costs of the paths are:", "{:.2f}".format(sum(path_costs)))
 
     for i in range(0, NO_VEHICLES):
@@ -127,36 +128,34 @@ def print_phenotype(c: Chromosome, calculate_distance, *args, **kwargs):
 
 
 # plot the routes of the vehicles of a chromosome as a map
-def plot_map(c: Chromosome, data):
-    x_data = [d[0] for d in data]
-    y_data = [d[1] for d in data]
-    colors = ["#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-             for _ in range(NO_VEHICLES)]
+def plot_map(c: Chromosome, data_matrix):
+    x_data = [d[0] for d in data_matrix]
+    y_data = [d[1] for d in data_matrix]
     routes = []
 
     for i in range(0, NO_VEHICLES):
-        route = [0]
+        route = []
         for j in range(0, len(c.vehicles)):
             if c.vehicles[j] == i:
                 route.append(c.stops[j])
-        route.append(0)
         routes.append(route)
 
     for i in range(0, len(routes)):
         x_points = []
         y_points = []
         for j in routes[i]:
-            x_points.append(x_data[j])
-            y_points.append(y_data[j])
-        plt.plot(x_points[1:-1], y_points[1:-1], label="Route" + str(i + 1), marker='o', color=colors[i])
-        plt.plot(x_points[:2], y_points[:2], color=colors[i], linestyle="--")
-        plt.plot(x_points[-2:], y_points[-2:], color=colors[i], linestyle="--")
+            x_points.append(j[0])
+            y_points.append(j[1])
+        plt.plot(x_points, y_points, label="Route" + str(i + 1), marker='o', color=colors[i])
+        plt.plot(x_points[:1], y_points[:1], color= random.choice(list(mcolors.CSS4_COLORS.keys())), linestyle="--")
+        plt.plot(x_points[-1:], y_points[-1:], color = random.choice(list(mcolors.CSS4_COLORS.keys())), linestyle="--")
 
     plt.plot(x_data[0], y_data[0], marker='o', color='black')
 
     plt.legend()
     plt.savefig("GA_VRP.png")
     plt.show()
+
 
 
 __all__ = [
@@ -167,6 +166,7 @@ __all__ = [
     "calculate_distance_matrix_geopy",
     "calculate_path_costs",
     "print_cost",
+    "print_single_vehicle_cost",
     "print_phenotype",
     "plot_map",
 ]
