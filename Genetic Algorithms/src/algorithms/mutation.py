@@ -5,7 +5,7 @@ from ..constants import *
 from ..utils import *
 
 # does the mutation by swapping to random elements
-def do_mutation(c: Chromosome):
+def do_mutation(c: Chromosome, calculate_distance_method):
 
     old_chrom = Chromosome(c.stops.copy(), c.vehicles.copy(), c.fitness)
 
@@ -17,7 +17,7 @@ def do_mutation(c: Chromosome):
             else:
                 swap_gene_vehicles(c)
 
-        evaluate_fitness(c)
+        evaluate_fitness(c, calculate_distance_method)
         if c.fitness < old_chrom.fitness:
             c.stops = old_chrom.stops.copy()
             c.vehicles = old_chrom.vehicles.copy()

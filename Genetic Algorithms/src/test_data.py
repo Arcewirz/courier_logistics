@@ -5,11 +5,28 @@ from geopy.geocoders import Nominatim
 
 
 def create_dataframe_points(xy_from=0, xy_to = 50, num_points = 175):
-    """ Function for generation sample data on 2D space.
+    """ Function for generation sample data on 2D space for VRP.
 
         Returns:
-            list: two lists of tuples.
-            First constains only x and y, second contains x, y and weight of parcel.
+            list: constains only z, y of orders
+    """
+    data = np.random.uniform(xy_from, xy_to, size=(num_points,2))
+    depot = np.array([xy_to/2, xy_to/2])
+
+    df = pd.DataFrame({
+            "x": data[:,0],
+            "y": data[:,1]   
+            })
+    df.iloc[0] = [depot[0], depot[1]]
+
+    return [(float(df.loc[index, 'x']), float(df.loc[index, 'y'])) for index, rowb in df.iterrows()]
+
+
+def create_dataframe_weighted_points(xy_from=0, xy_to = 50, num_points = 175):
+    """ Function for generation sample data on 2D space for CVRP.
+
+        Returns:
+            list: contains x, y and weight of parcel.
     """
     data = np.random.uniform(xy_from, xy_to, size=(num_points,2))
     depot = np.array([xy_to/2, xy_to/2])
@@ -28,8 +45,7 @@ def create_dataframe_points(xy_from=0, xy_to = 50, num_points = 175):
             })
     df.iloc[0] = [depot[0], depot[1], 1.0]
 
-    return [[(float(df.loc[index, 'x']), float(df.loc[index, 'y'])) for index, rowb in df.iterrows()],
-            [(float(df.loc[index, 'x']), float(df.loc[index, 'y']), float(df.loc[index, 'weight'])) for index, rowb in df.iterrows()]]
+    return [(float(df.loc[index, 'x']), float(df.loc[index, 'y']), float(df.loc[index, 'weight'])) for index, rowb in df.iterrows()]
 
 
 def create_random_addresses(num_points = 175):

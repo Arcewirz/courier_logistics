@@ -4,7 +4,7 @@ from ..utils import *
 from .fitness import *
 
 # do the crossover, implemented according to the order crossover
-def do_crossover(parent1: Chromosome, parent2: Chromosome):
+def do_crossover(parent1: Chromosome, parent2: Chromosome, calculate_distance_method):
     crossover_point_1 = random.randint(0, len(parent1.stops) - 1)
     crossover_point_2 = random.randint(0, len(parent1.stops) - 1)
     child_stops = [-1] * len(parent1.stops)
@@ -23,8 +23,8 @@ def do_crossover(parent1: Chromosome, parent2: Chromosome):
     child_1 = Chromosome(child_stops, parent1.vehicles.copy())
     child_2 = Chromosome(child_stops, parent2.vehicles.copy())
 
-    evaluate_fitness(child_1)
-    evaluate_fitness(child_2)
+    evaluate_fitness(child_1, calculate_distance_method)
+    evaluate_fitness(child_2, calculate_distance_method)
 
     if child_1.fitness > child_2.fitness:
         return child_1

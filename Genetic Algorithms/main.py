@@ -15,23 +15,26 @@ import src
 
 
 # implements the Genetic Algorithm
-def ga_solve():
-    for chrom in curr_population:
-        src.evaluate_fitness(chrom)
+def ga_solve(calculate_distance_method, curr_population):
 
-    for i in range(0, src.NO_GENERATIONS):
+    for chrom in curr_population:
+        # calculate_distance_matrix_dataframe_points
+        # calculate_distance_matrix_geopy
+        src.evaluate_fitness(chrom, calculate_distance_method)
+
+    for _ in range(0, src.NO_GENERATIONS):
         new_population = []
-        for j in range(0, src.POPULATION_SIZE):
+        for _ in range(0, src.POPULATION_SIZE):
             parent1 = src.select_parent(curr_population)
 
             if random.uniform(0, 1) < src.CROSSOVER_RATE:
                 parent2 = src.select_parent(curr_population)
-                child = src.do_crossover(parent1, parent2)
+                child = src.do_crossover(parent1, parent2, calculate_distance_method)
             else:
                 child = parent1
 
-            src.do_mutation(child)
-            src.evaluate_fitness(child)
+            src.do_mutation(child, calculate_distance_method)
+            src.evaluate_fitness(child, calculate_distance_method)
             new_population.append(child)
 
         if src.KEEP_BEST:
@@ -51,24 +54,27 @@ if __name__ == '__main__':
     total_cpu_time = 0
 
     for i in range(0, src.NO_EXPERIMENT_ITERATIONS):
-        
+
         # punkty w 2D
-        curr_population = src.create_dataframe_points()
+        curr_population = src.gen_population(src.create_dataframe_points)
+
+        # punkty w 2D z wagami
+        # curr_population = src.create_dataframe_weighted_points()
 
         ## adresy w geopy
-        # curr_population = src.create_dataframe_points()
+        # curr_population = src.create_random_addresses()
 
         start_time = time.time()
-        chromosome = ga_solve()
+        chromosome = ga_solve(src.calculate_distance_matrix_dataframe_points, curr_population=curr_population)
         end_time = time.time()
 
         # punkty w 2D
-        costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_map_context, curr_population)
+        costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_distance_matrix_dataframe_points, curr_population)
         # # adresy w geopy
         # costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_distance_matrix_geopy, curr_population)
         
         src.print_cost(costs_i, i + 1, end_time - start_time)
-        src.print_phenotype(chromosome, src.calculate_map_context, curr_population)
+        src.print_phenotype(chromosome, src.calculate_distance_matrix_dataframe_points, curr_population)
         total_cpu_time += end_time - start_time
 
         if chromosome.fitness > best_chromosome.fitness:

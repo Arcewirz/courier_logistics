@@ -5,6 +5,7 @@ from typing import List
 from dataclasses import dataclass, field
 from geopy.distance import geodesic
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 from src.algorithms import *
@@ -34,7 +35,7 @@ def _gen_chromosome(data):
     random.shuffle(data)
     _vehicles = []
     for _ in range(0, len(data)):
-        _vehicles.append(random.randint(0, NO_VEHICLES))
+        _vehicles.append(random.randint(1, NO_VEHICLES))
 
     return Chromosome(data.copy(), _vehicles.copy())
 
@@ -51,11 +52,9 @@ def get_best_chromosome(population):
 
 
 # creates the distance matrix from order's addresses
-def calculate_map_context(rows: list[tuple]):
-    _dist_matrix = []
-    for i in range(0, len(rows)):
-        row = [0] * len(rows)
-        _dist_matrix.append(row)
+def calculate_distance_matrix_dataframe_points(chrom: Chromosome):
+    rows = chrom.stops
+    _dist_matrix = np.zeros((len(rows),len(rows)))
 
     for i in range(0, len(rows)):
         for j in range(i, len(rows)):
@@ -69,20 +68,24 @@ def calculate_map_context(rows: list[tuple]):
     return _dist_matrix, rows
 
 
-def calculate_distance_matrix_geopy(coords: list[tuple]):
+def calculate_distance_matrix_geopy(chrom: Chromosome):
+    coords = chrom.stops
     distance_matrix = [[geodesic(from_coord, to_coord).km for to_coord in coords] 
                          for from_coord in coords]
     
     return distance_matrix, coords
 
+#
+# dodać funkcje która pokaże koszt dla każdego samochodu
+#
 
-def calculate_path_costs(c: Chromosome, calculate_distance, *args, **kwargs):
-    path_costs = [0] * NO_VEHICLES
-    prev_stop = [0] * NO_VEHICLES
-    distance_matrix, data_matrix = calculate_distance(*args, **kwargs) 
+def calculate_path_costs(c: Chromosome, calculate_distance_method):
+    path_costs = [0] * (NO_VEHICLES + 1)
+    prev_stop = [0] * (NO_VEHICLES + 1)
+    distance_matrix, data_matrix = calculate_distance_method(c) 
 
     for i in range(0, len(c.vehicles)):
-        stop = c.stops[i]  # the current stop
+        stop = c.stops.index(c.stops[i])  # the current stop index
         vehicle_no = c.vehicles[i]  # the current driver that stops for this customer
         dist = distance_matrix[prev_stop[vehicle_no]][stop]  # distance driver makes for this customer
         path_costs[vehicle_no] += dist
@@ -157,7 +160,7 @@ __all__ = [
     "Chromosome",  
     "gen_population", 
     "get_best_chromosome",
-    "calculate_map_context", 
+    "calculate_distance_matrix_dataframe_points", 
     "calculate_distance_matrix_geopy",
     "calculate_path_costs",
     "print_cost",
