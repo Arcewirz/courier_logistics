@@ -6,6 +6,8 @@ from dataclasses import dataclass, field
 from geopy.distance import geodesic
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+import matplotlib
+import colorsys
 import numpy as np
 import pandas as pd
 
@@ -131,12 +133,16 @@ def print_phenotype(c: Chromosome, calculate_distance):
         print("")
 
 
+def _random_color():
+        rand = lambda: random.randint(70, 200)
+        return '#%02X%02X%02X' % (rand(), rand(), rand())
+
+
 # plot the routes of the vehicles of a chromosome as a map
 def plot_map(c: Chromosome, data_matrix):
     x_data = [d[0] for d in data_matrix]
     y_data = [d[1] for d in data_matrix]
     routes = []
-
     for i in range(0, NO_VEHICLES):
         route = []
         for j in range(0, len(c.vehicles)):
@@ -150,9 +156,10 @@ def plot_map(c: Chromosome, data_matrix):
         for j in routes[i]:
             x_points.append(j[0])
             y_points.append(j[1])
-        plt.plot(x_points, y_points, label="Route" + str(i + 1), marker='o', color= random.choice(list(mcolors.CSS4_COLORS.keys())))
-        plt.plot(x_points[:1], y_points[:1], color= random.choice(list(mcolors.CSS4_COLORS.keys())), linestyle="--")
-        plt.plot(x_points[-1:], y_points[-1:], color = random.choice(list(mcolors.CSS4_COLORS.keys())), linestyle="--")
+
+        plt.plot(x_points, y_points, label="Route" + str(i + 1), marker='o', c=_random_color())
+        plt.plot(x_points[:1], y_points[:1], c=_random_color(), linestyle="--")
+        plt.plot(x_points[-1:], y_points[-1:], c=_random_color(), linestyle="--")
 
     plt.plot(x_data[0], y_data[0], marker='o', color='black')
 
