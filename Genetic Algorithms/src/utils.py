@@ -32,8 +32,12 @@ def gen_population(data_generation_method, *args, **kwargs):
 
 # generates a single chromosome
 def _gen_chromosome(data):
+    data_to_shuffle = data[1:]
     # generates a random sequence of customers and a corresponding array which vehicle stops at this customer
-    random.shuffle(data)
+    random.shuffle(data_to_shuffle)
+    # add depot at the beginning of list of stops
+    data = [data[0]] + data_to_shuffle
+
     _vehicles = []
     for _ in range(0, len(data)):
         _vehicles.append(random.randint(1, NO_VEHICLES))
