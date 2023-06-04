@@ -53,22 +53,18 @@ if __name__ == '__main__':
     for i in range(0, src.NO_EXPERIMENT_ITERATIONS):
 
         # punkty w 2D
-        curr_population = src.gen_population(src.create_dataframe_points)
+        addresses_to_visit = src.create_dataframe_points()
+        curr_population = src.gen_population_from_data(no_couriers=src.NO_VEHICLES, addresses_to_visit=addresses_to_visit)
 
-        # punkty w 2D z wagami
-        # curr_population = src.create_dataframe_weighted_points()
+        for c in curr_population:
+            src.add_depot_to_data(c, no_couriers=src.NO_VEHICLES, depot_address=(25.0, 25.0))
 
-        ## adresy w geopy
-        # curr_population = src.create_random_addresses()
 
         start_time = time.time()
         chromosome = ga_solve(src.calculate_distance_matrix_dataframe_points, curr_population=curr_population)
         end_time = time.time()
-
-        # punkty w 2D
+        
         costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_distance_matrix_dataframe_points)
-        # # adresy w geopy
-        # costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_distance_matrix_geopy, curr_population)
         
         # use when multiple iterations
         # src.print_cost(costs_i, i + 1, end_time - start_time)

@@ -11,7 +11,7 @@ def evaluate_fitness(c: Chromosome, calculate_distance_method, *args):
         f = path_costs[i]
         total_fitness += f
 
-    c.fitness = 1 / total_fitness
+    c.fitness = (1 / total_fitness)*1000
 
 
 __all__ = [

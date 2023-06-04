@@ -23,6 +23,36 @@ class Chromosome:
     fitness: int = 0
 
 
+# given addresses from app
+def gen_population_from_data(no_couriers: int, addresses_to_visit: list[tuple[float]]):
+    _chromosomes = []
+    for _ in range(0, POPULATION_SIZE):
+        _chromosomes.append(_gen_chromosome_from_data(no_couriers, addresses_to_visit))      
+
+    return _chromosomes
+
+
+def _gen_chromosome_from_data(no_couriers, addresses_to_visit):
+    random.shuffle(addresses_to_visit)
+
+    _vehicles = []
+    for _ in range(0, len(addresses_to_visit)):
+        _vehicles.append(random.randint(1, no_couriers))
+        
+    return Chromosome(addresses_to_visit.copy(), _vehicles.copy())
+
+
+def add_depot_to_data(c: Chromosome, no_couriers: int, depot_address: tuple[float]):
+    for i in range(1, no_couriers+1):
+        for vehicle in c.vehicles:
+            if vehicle == i:
+                c.vehicles.insert(c.vehicles.index(vehicle), vehicle)
+                c.stops.insert(c.vehicles.index(vehicle), depot_address)
+                break
+
+    return c    
+
+
 # generates the initial population
 def gen_population(data_generation_method, *args, **kwargs):
     data = data_generation_method(*args, **kwargs)
@@ -34,6 +64,10 @@ def gen_population(data_generation_method, *args, **kwargs):
 
 # generates a single chromosome
 def _gen_chromosome(data):
+
+    # it works only for one vehicle
+
+
     data_to_shuffle = data[1:]
     # generates a random sequence of customers and a corresponding array which vehicle stops at this customer
     random.shuffle(data_to_shuffle)
@@ -171,6 +205,8 @@ def plot_map(c: Chromosome, costs_i, data_matrix):
 
 __all__ = [
     "Chromosome",  
+    "gen_population_from_data",
+    "add_depot_to_data",
     "gen_population", 
     "get_best_chromosome",
     "calculate_distance_matrix_dataframe_points", 
