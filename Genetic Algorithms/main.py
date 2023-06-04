@@ -15,11 +15,9 @@ import src
 
 
 # implements the Genetic Algorithm
+# calculate_distance_method:   calculate_distance_matrix_dataframe_points/calculate_distance_matrix_geopy
 def ga_solve(calculate_distance_method, curr_population):
-
-    for chrom in curr_population:
-        # calculate_distance_matrix_dataframe_points
-        # calculate_distance_matrix_geopy
+    for chrom in curr_population:  
         src.evaluate_fitness(chrom, calculate_distance_method)
 
     for _ in range(0, src.NO_GENERATIONS):
@@ -34,7 +32,6 @@ def ga_solve(calculate_distance_method, curr_population):
                 child = parent1
 
             src.do_mutation(child, calculate_distance_method)
-            src.evaluate_fitness(child, calculate_distance_method)
             new_population.append(child)
 
     if src.KEEP_BEST:
@@ -73,8 +70,8 @@ if __name__ == '__main__':
         # # adresy w geopy
         # costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_distance_matrix_geopy, curr_population)
         
-        src.print_cost(costs_i, i + 1, end_time - start_time)
-        src.print_single_vehicle_cost(costs_i)
+        # use when multiple iterations
+        # src.print_cost(costs_i, i + 1, end_time - start_time)
         src.print_phenotype(chromosome, src.calculate_distance_matrix_dataframe_points)
         total_cpu_time += end_time - start_time
 
@@ -89,4 +86,5 @@ if __name__ == '__main__':
     print("Runtime of the algorithm for the best solution: ", "{:.2f}".format(best_chrom_runtime), "s", sep="")
 
     src.print_phenotype(best_chromosome, src.calculate_distance_matrix_dataframe_points)
-    src.plot_map(best_chromosome, data_matrix)
+    src.print_single_vehicle_cost(costs_i)
+    src.plot_map(best_chromosome, costs_i, data_matrix)

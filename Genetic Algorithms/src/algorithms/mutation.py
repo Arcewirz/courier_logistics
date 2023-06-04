@@ -29,8 +29,8 @@ def do_mutation(c: Chromosome, calculate_distance_method):
 
 # swaps two genes in the stops array
 def swap_gene_stops(c: Chromosome):
-    swapping_index_1 = random.randint(0, len(c.stops) - 1)
-    swapping_index_2 = random.randint(0, len(c.stops) - 1)
+    swapping_index_1 = random.randint(1, len(c.stops) - 1)
+    swapping_index_2 = random.randint(1, len(c.stops) - 1)
 
     temp_stop = c.stops[swapping_index_1]
     c.stops[swapping_index_1] = c.stops[swapping_index_2]

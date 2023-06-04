@@ -125,41 +125,41 @@ def print_phenotype(c: Chromosome, calculate_distance):
     path_costs = calculate_path_costs(c, calculate_distance)[0]
     print("The total costs of the paths are:", "{:.2f}".format(sum(path_costs)))
 
-    for i in range(0, NO_VEHICLES):
-        print("Route #", i + 1, ":", sep="", end=" ")
+    for i in range(1, NO_VEHICLES+1):
+        print("Route #", i, ":", sep="", end=" ")
         for j in range(0, len(c.vehicles)):
             if c.vehicles[j] == i:
                 print(c.stops[j], end=" ")
         print("")
 
 
-def _random_color():
-        rand = lambda: random.randint(70, 200)
-        return '#%02X%02X%02X' % (rand(), rand(), rand())
-
-
 # plot the routes of the vehicles of a chromosome as a map
-def plot_map(c: Chromosome, data_matrix):
+def plot_map(c: Chromosome, costs_i, data_matrix):
     x_data = [d[0] for d in data_matrix]
     y_data = [d[1] for d in data_matrix]
     routes = []
-    for i in range(0, NO_VEHICLES):
+    for i in range(1, NO_VEHICLES+1):
         route = []
         for j in range(0, len(c.vehicles)):
             if c.vehicles[j] == i:
                 route.append(c.stops[j])
         routes.append(route)
+    
+    colors = matplotlib.colormaps["tab20"](range(len(routes)))
 
     for i in range(0, len(routes)):
         x_points = []
         y_points = []
+        color = colors[i]
+
         for j in routes[i]:
             x_points.append(j[0])
             y_points.append(j[1])
 
-        plt.plot(x_points, y_points, label="Route" + str(i + 1), marker='o', c=_random_color())
-        plt.plot(x_points[:1], y_points[:1], c=_random_color(), linestyle="--")
-        plt.plot(x_points[-1:], y_points[-1:], c=_random_color(), linestyle="--")
+        plt.plot(x_points, y_points, 
+                 label="Route " + str(i + 1) + ' ' + str(round(costs_i[i+1], 2)) + 'km', marker='o', c=color)
+        plt.plot(x_points[:1], y_points[:1], c=color, linestyle="--")
+        plt.plot(x_points[-1:], y_points[-1:], c=color, linestyle="--")
 
     plt.plot(x_data[0], y_data[0], marker='o', color='black')
 
