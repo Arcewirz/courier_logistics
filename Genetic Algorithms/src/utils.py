@@ -42,17 +42,6 @@ def _gen_chromosome_from_data(no_couriers, addresses_to_visit):
     return Chromosome(addresses_to_visit.copy(), _vehicles.copy())
 
 
-def add_depot_to_data(c: Chromosome, no_couriers: int, depot_address: tuple[float]):
-    for i in range(1, no_couriers+1):
-        for vehicle in c.vehicles:
-            if vehicle == i:
-                c.vehicles.insert(c.vehicles.index(vehicle), vehicle)
-                c.stops.insert(c.vehicles.index(vehicle), depot_address)
-                break
-
-    return c    
-
-
 # generates the initial population
 def gen_population(data_generation_method, *args, **kwargs):
     data = data_generation_method(*args, **kwargs)
@@ -64,9 +53,9 @@ def gen_population(data_generation_method, *args, **kwargs):
 
 # generates a single chromosome
 def _gen_chromosome(data):
-
+    ##
     # it works only for one vehicle
-
+    ##
 
     data_to_shuffle = data[1:]
     # generates a random sequence of customers and a corresponding array which vehicle stops at this customer
@@ -168,15 +157,14 @@ def print_phenotype(c: Chromosome, calculate_distance):
 
 
 # plot the routes of the vehicles of a chromosome as a map
-def plot_map(c: Chromosome, costs_i, data_matrix):
-    x_data = [d[0] for d in data_matrix]
-    y_data = [d[1] for d in data_matrix]
+def plot_map(c: Chromosome, costs_i, depot_address):
     routes = []
     for i in range(1, NO_VEHICLES+1):
-        route = []
+        route = [depot_address]
         for j in range(0, len(c.vehicles)):
             if c.vehicles[j] == i:
                 route.append(c.stops[j])
+        route.append(depot_address)
         routes.append(route)
     
     colors = matplotlib.colormaps["tab20"](range(len(routes)))
@@ -195,7 +183,7 @@ def plot_map(c: Chromosome, costs_i, data_matrix):
         plt.plot(x_points[:1], y_points[:1], c=color, linestyle="--")
         plt.plot(x_points[-1:], y_points[-1:], c=color, linestyle="--")
 
-    plt.plot(x_data[0], y_data[0], marker='o', color='black')
+    plt.plot(depot_address[0], depot_address[1], marker='o', color='black')
 
     plt.legend()
     plt.savefig("GA_VRP.png")
@@ -206,7 +194,6 @@ def plot_map(c: Chromosome, costs_i, data_matrix):
 __all__ = [
     "Chromosome",  
     "gen_population_from_data",
-    "add_depot_to_data",
     "gen_population", 
     "get_best_chromosome",
     "calculate_distance_matrix_dataframe_points", 

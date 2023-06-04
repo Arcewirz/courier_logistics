@@ -56,14 +56,13 @@ if __name__ == '__main__':
         addresses_to_visit = src.create_dataframe_points()
         curr_population = src.gen_population_from_data(no_couriers=src.NO_VEHICLES, addresses_to_visit=addresses_to_visit)
 
-        for c in curr_population:
-            src.add_depot_to_data(c, no_couriers=src.NO_VEHICLES, depot_address=(25.0, 25.0))
-
+        # for c in curr_population:
+        #     src.add_depot_to_data(c, no_couriers=src.NO_VEHICLES, depot_address=(25.0, 25.0))
 
         start_time = time.time()
         chromosome = ga_solve(src.calculate_distance_matrix_dataframe_points, curr_population=curr_population)
         end_time = time.time()
-        
+
         costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_distance_matrix_dataframe_points)
         
         # use when multiple iterations
@@ -83,4 +82,4 @@ if __name__ == '__main__':
 
     src.print_phenotype(best_chromosome, src.calculate_distance_matrix_dataframe_points)
     src.print_single_vehicle_cost(costs_i)
-    src.plot_map(best_chromosome, costs_i, data_matrix)
+    src.plot_map(best_chromosome, costs_i, depot_address=(25.0, 25.0))
