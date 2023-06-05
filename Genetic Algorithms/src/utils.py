@@ -179,7 +179,7 @@ def plot_map(c: Chromosome, costs_i, depot_address):
             y_points.append(j[1])
 
         plt.plot(x_points, y_points, 
-                 label="Route " + str(i + 1) + ' ' + str(round(costs_i[i+1], 2)) + 'km', marker='o', c=color)
+                 label="Route " + str(i + 1) + ': ' + str(round(costs_i[i+1], 2)) + 'km', marker='o', c=color)
         plt.plot(x_points[:1], y_points[:1], c=color, linestyle="--")
         plt.plot(x_points[-1:], y_points[-1:], c=color, linestyle="--")
 

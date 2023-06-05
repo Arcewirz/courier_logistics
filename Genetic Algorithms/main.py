@@ -16,7 +16,7 @@ import src
 
 # implements the Genetic Algorithm
 # calculate_distance_method:   calculate_distance_matrix_dataframe_points/calculate_distance_matrix_geopy
-def ga_solve(calculate_distance_method, curr_population):
+def ga_solve(calculate_distance_method, curr_population, depot_address):
     for chrom in curr_population:  
         src.evaluate_fitness(chrom, calculate_distance_method)
 
@@ -31,7 +31,7 @@ def ga_solve(calculate_distance_method, curr_population):
             else:
                 child = parent1
 
-            src.do_mutation(child, calculate_distance_method)
+            src.do_mutation(child, calculate_distance_method, depot_address)
             new_population.append(child)
 
     if src.KEEP_BEST:
@@ -55,12 +55,13 @@ if __name__ == '__main__':
         # punkty w 2D
         addresses_to_visit = src.create_dataframe_points()
         curr_population = src.gen_population_from_data(no_couriers=src.NO_VEHICLES, addresses_to_visit=addresses_to_visit)
+        depot_address = (25.0, 25.0)
 
         # for c in curr_population:
         #     src.add_depot_to_data(c, no_couriers=src.NO_VEHICLES, depot_address=(25.0, 25.0))
 
         start_time = time.time()
-        chromosome = ga_solve(src.calculate_distance_matrix_dataframe_points, curr_population=curr_population)
+        chromosome = ga_solve(src.calculate_distance_matrix_dataframe_points, curr_population=curr_population, depot_address=depot_address)
         end_time = time.time()
 
         costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_distance_matrix_dataframe_points)
