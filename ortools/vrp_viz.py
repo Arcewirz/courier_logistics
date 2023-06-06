@@ -37,7 +37,9 @@ class VRPPlot():
     def __init__(self,
                  coords: list[tuple[float]],
                  trails: list[list[int]]=[],
-                 one_way = True) -> None:
+                 one_way = True,
+                 save = False,
+                 name = None) -> None:
         """Initialize vrp plot instance.
 
         Args:
@@ -48,6 +50,8 @@ class VRPPlot():
         self.coords = coords
         self.trails = trails
         self.one_way = one_way
+        self.save = save
+        self.name = name
         
         
     def _plot(self, one_way):
@@ -56,8 +60,7 @@ class VRPPlot():
         ne = coords_array.min(axis=0).tolist()
         sw = coords_array.max(axis=0).tolist()
         
-        plot = folium.Map(location=center, 
-                          tiles="Stamen Terrain")
+        plot = folium.Map(location=center)
 
         folium.Marker(
             location=self.coords[0],
@@ -96,9 +99,14 @@ class VRPPlot():
     
     def show(self):
         plot = self._plot(self.one_way)
+        if self.save:
+            if self.name:
+                self._save(self.name)
+            else:
+                self._save("vrp_map.html")
         return plot
     
     
-    def save(self, path="vrp_map.html") -> None:
-        plot = self._plot()
+    def _save(self, path="vrp_map.html") -> None:
+        plot = self._plot(self.one_way)
         plot.save(path)
