@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import copy
 from operator import itemgetter
+from geopy import distance
+
 
 def find_angle(point1, point2):
     '''
@@ -45,7 +47,7 @@ def find_distances(tup):
         for j, dest in enumerate(cities):
             geo2 = cities[dest]
             if city != dest :
-                dist_dict_city[dest] = np.math.dist(geo1, geo2)
+                dist_dict_city[dest] = distance.distance(geo1, geo2).kilometers
         distance_dict[city] = dist_dict_city
     return distance_dict
 

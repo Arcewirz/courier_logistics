@@ -14,15 +14,11 @@ def df_rnn_sklearn(courier, depot, points):
     '''
     x = list(map(itemgetter(0), points))
     y = list(map(itemgetter(1), points))
-
-            # linspace = np.linspace(-180, 180, courier+1)
-            # degrees = [find_angle(x, depot) for x in points]
-            # which_cluster = [np.searchsorted(linspace, x) for x in degrees]
     
     kmeans = KMeans(n_clusters=courier, n_init='auto').fit(points)
     which_cluster = kmeans.labels_
             
-    dist_to_depot = [np.math.dist(points[i], depot) for i in range(len(points))]
+    dist_to_depot = [distance.distance(points[i], depot).kilometers for i in range(len(points))]
 
 
     df = pd.DataFrame({
@@ -109,10 +105,9 @@ def main_atan(courier, points, depot):
 
 # Example
 if __name__ == '__main__':
-    points = np.random.uniform(0, 50, size=(100,2))
+    points = np.random.uniform(0, 10, size=(100,2))
     courier = 5
-    depot = (25,25)
+    depot = (5,5)
     df_sklearn = main_sklearn(courier, points, depot)
     df_atan = main_atan(courier, points, depot)
     print("sklearn: ",df_sklearn["distance"].sum(), "\natan: ", df_atan["distance"].sum())
-    print("sklearn: ",df_sklearn.head(courier), "\natan: ", df_atan.head(courier))
