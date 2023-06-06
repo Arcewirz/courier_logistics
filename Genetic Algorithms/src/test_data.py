@@ -1,4 +1,4 @@
-import os, random, yaml
+import random, yaml
 import numpy as np
 import pandas as pd
 from geopy.geocoders import Nominatim
@@ -6,7 +6,7 @@ from .constants import *
 
 
 def create_dataframe_points(xy_from=0, xy_to = 50, num_points = POPULATION_SIZE):
-    """ Function for generation sample data on 2D space for VRP.
+    """ Function for generating sample data on 2D space for VRP.
 
         Returns:
             list: constains only z, y of orders
@@ -24,7 +24,7 @@ def create_dataframe_points(xy_from=0, xy_to = 50, num_points = POPULATION_SIZE)
 
 
 def create_dataframe_weighted_points(xy_from=0, xy_to = 50, num_points = POPULATION_SIZE):
-    """ Function for generation sample data on 2D space for CVRP.
+    """ Function for generating sample data on 2D space for CVRP.
 
         Returns:
             list: contains x, y and weight of parcel.

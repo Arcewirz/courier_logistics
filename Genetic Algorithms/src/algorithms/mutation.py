@@ -67,7 +67,7 @@ def two_opt_one_path(c: Chromosome, distance_matrix, depot_address):
             c.stops[i] = route.pop(0)
 
 
-# implements part of the 2-opt route algorithm to avoid twists in a route
+# implements 2-opt route algorithm to avoid twists in a route
 def two_opt_route(c, distance_matrix, route):
     path_size = len(route)
     for i in range(1, path_size - 2):

@@ -5,11 +5,8 @@ from typing import List
 from dataclasses import dataclass, field
 from geopy.distance import geodesic
 import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
 import matplotlib
-import colorsys
 import numpy as np
-import pandas as pd
 
 from src.algorithms import *
 from src.constants import *
@@ -23,7 +20,7 @@ class Chromosome:
     fitness: int = 0
 
 
-# given addresses from app
+
 def gen_population_from_data(no_couriers: int, addresses_to_visit: list[tuple[float]]):
     _chromosomes = []
     for _ in range(0, POPULATION_SIZE):
@@ -40,34 +37,6 @@ def _gen_chromosome_from_data(no_couriers, addresses_to_visit):
         _vehicles.append(random.randint(1, no_couriers))
         
     return Chromosome(addresses_to_visit.copy(), _vehicles.copy())
-
-
-# generates the initial population
-def gen_population(data_generation_method, *args, **kwargs):
-    data = data_generation_method(*args, **kwargs)
-    _chromosomes = []
-    for _ in range(0, POPULATION_SIZE):
-        _chromosomes.append(_gen_chromosome(data))
-    return _chromosomes
-
-
-# generates a single chromosome
-def _gen_chromosome(data):
-    ##
-    # it works only for one vehicle
-    ##
-
-    data_to_shuffle = data[1:]
-    # generates a random sequence of customers and a corresponding array which vehicle stops at this customer
-    random.shuffle(data_to_shuffle)
-    # add depot at the beginning of list of stops
-    data = [data[0]] + data_to_shuffle
-
-    _vehicles = []
-    for _ in range(0, len(data)):
-        _vehicles.append(random.randint(1, NO_VEHICLES))
-
-    return Chromosome(data.copy(), _vehicles.copy())
 
 
 # returns the best chromosome in a population
@@ -112,9 +81,9 @@ def calculate_path_costs(c: Chromosome, calculate_distance_method):
     distance_matrix, data_matrix = calculate_distance_method(c) 
 
     for i in range(0, len(c.vehicles)):
-        stop = c.stops.index(c.stops[i])  # the current stop index
-        vehicle_no = c.vehicles[i]  # the current driver that stops for this customer
-        dist = distance_matrix[prev_stop[vehicle_no]][stop]  # distance driver makes for this customer
+        stop = c.stops.index(c.stops[i])
+        vehicle_no = c.vehicles[i]
+        dist = distance_matrix[prev_stop[vehicle_no]][stop]
         path_costs[vehicle_no] += dist
         prev_stop[vehicle_no] = stop
 
@@ -194,8 +163,7 @@ def plot_map(c: Chromosome, costs_i, depot_address):
 
 __all__ = [
     "Chromosome",  
-    "gen_population_from_data",
-    "gen_population", 
+    "gen_population_from_data", 
     "get_best_chromosome",
     "calculate_distance_matrix_dataframe_points", 
     "calculate_distance_matrix_geopy",
