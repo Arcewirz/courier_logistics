@@ -1,5 +1,6 @@
 from vrp_viz import VRPPlot
 from ortools.constraint_solver import routing_enums_pb2, pywrapcp
+from geopy.distance import geodesic
 
 
 def algorytm_or_tools(liczba_kurierow: int, 
@@ -63,7 +64,7 @@ def perform_TSP(data, manager, routing):
 
     
 def distance_between_two_nodes(start: tuple, end: tuple):
-    return int(((end[1]-start[1])**2+(end[0]-start[0])**2)**(1/2))
+    return int(1000*((end[1]-start[1])**2+(end[0]-start[0])**2)**(1/2))
 
 
 def _create_data_model(distances, num_vehicles=None):
@@ -78,24 +79,31 @@ def _create_data_model(distances, num_vehicles=None):
 def return_solution(data, manager, routing, solution, locations):
     index = routing.Start(0)
     output = []
-    #distances = []
-    #total_distance = 0
+    distances = []
+    distances_2 = []
+    total_distance = 0
     for vehicle_id in range(data['num_vehicles']):
         single_output = []
         index = routing.Start(vehicle_id)
         route_distance = 0
+        route_distance_2 = 0
         while not routing.IsEnd(index):
             single_output.append(locations[manager.IndexToNode(index)])
             previous_index = index
             index = solution.Value(routing.NextVar(index))
-            route_distance += routing.GetArcCostForVehicle(
+            #print(previous_index, index)
+            try:
+                route_distance += distance_between_two_nodes(locations[previous_index], adresses[index])
+            except:
+                route_distance += distance_between_two_nodes(locations[0], locations[0])
+                
+            route_distance_2 += routing.GetArcCostForVehicle(
                 previous_index, index, vehicle_id)
             
-        single_output.append(locations[data['depot']])
+        single_output.append(locations[manager.IndexToNode(index)])
         output.append(single_output)
-        #distances.append(int(route_distance))
-        #total_distance += int(route_distance)
-     
+        distances_2.append(f'{round(int(route_distance_2)/1000, 2)} km')
+        distances.append(f'{round(int(route_distance)/1000, 2)} km')
+        total_distance += round(int(route_distance)/1000, 2)
     return output
-    #return output, distances, total_distance
     
