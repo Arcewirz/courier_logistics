@@ -185,9 +185,10 @@ def plot_map(c: Chromosome, costs_i, depot_address):
 
     plt.plot(depot_address[0], depot_address[1], marker='o', color='black')
 
-    plt.legend()
+    plt.legend(title = 'Całkowity dystans:' + str(round(sum(costs_i), 2)) + ' km')
     plt.savefig("GA_VRP.png")
     plt.show()
+
 
 
 

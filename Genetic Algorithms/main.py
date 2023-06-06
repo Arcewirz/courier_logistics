@@ -1,4 +1,6 @@
 import random, time
+import pandas as pd
+import folium
 
 # import sys, os
 
@@ -12,6 +14,34 @@ import random, time
 # print(sys.path)
 
 import src
+
+# nieużywane
+def ga_alg(liczba_kurierow: int, 
+            wsp_punktu_startowego: tuple[float], 
+            wsp_punktow_do_odwiedzenia: tuple[tuple[float]]) -> list[list[tuple]]:
+    
+    src.POPULATION_SIZE = len(wsp_punktow_do_odwiedzenia)
+    src.NO_VEHICLES = liczba_kurierow
+
+    best_chromosome = src.Chromosome([], [])
+    wsp_punktow_do_odwiedzenia.insert(0, wsp_punktu_startowego)
+
+    curr_population = src.gen_population_from_data(no_couriers=liczba_kurierow, addresses_to_visit=wsp_punktow_do_odwiedzenia)
+    chromosome = ga_solve(src.calculate_distance_matrix_dataframe_points, curr_population=curr_population, depot_address=wsp_punktu_startowego)
+    
+    if chromosome.fitness > best_chromosome.fitness:
+        best_chromosome = chromosome
+
+    routes = []
+    for i in range(1, src.NO_VEHICLES+1):
+        route = [wsp_punktu_startowego]
+        for j in range(0, len(chromosome.vehicles)):
+            if chromosome.vehicles[j] == i:
+                route.append(chromosome.stops[j])
+        route.append(wsp_punktu_startowego)
+        routes.append(route)
+    
+    return routes
 
 
 # implements the Genetic Algorithm
@@ -52,13 +82,35 @@ if __name__ == '__main__':
 
     for i in range(0, src.NO_EXPERIMENT_ITERATIONS):
 
-        # punkty w 2D
-        addresses_to_visit = src.create_dataframe_points()
-        curr_population = src.gen_population_from_data(no_couriers=src.NO_VEHICLES, addresses_to_visit=addresses_to_visit)
-        depot_address = (25.0, 25.0)
+        # # punkty z Wrocławia
 
-        # for c in curr_population:
-        #     src.add_depot_to_data(c, no_couriers=src.NO_VEHICLES, depot_address=(25.0, 25.0))
+        # # depot_address = (51.11235095963508, 17.027098599384292)
+        # depot_address = (51.1277617, 17.1070973)
+        # addresses = pd.read_csv("addresses.csv")
+        # addresses['tuples'] = list(zip(addresses['51.1277617'], addresses['17.1070973']))
+        # addresses_to_visit = addresses['tuples'].to_list()
+        # addresses_to_visit.insert(0, depot_address)
+        # src.POPULATION_SIZE = len(addresses_to_visit)
+
+        # curr_population = src.gen_population_from_data(no_couriers=src.NO_VEHICLES, addresses_to_visit=addresses_to_visit)
+
+        # start_time = time.time()
+        # chromosome = ga_solve(src.calculate_distance_matrix_geopy, curr_population=curr_population, depot_address=depot_address)
+        # end_time = time.time()
+
+        # costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_distance_matrix_geopy)
+
+        # src.print_phenotype(best_chromosome, src.calculate_distance_matrix_geopy)
+        # src.print_single_vehicle_cost(costs_i)
+
+        # punkty 2D
+
+        lista_adresow = pd.read_csv("stala_lista.csv")["punkty"].to_list()
+        addresses_to_visit  = [eval(ele) for ele in lista_adresow]
+        depot_address = (25.0, 25.0)
+        src.POPULATION_SIZE = len(addresses_to_visit)
+
+        curr_population = src.gen_population_from_data(no_couriers=src.NO_VEHICLES, addresses_to_visit=addresses_to_visit)
 
         start_time = time.time()
         chromosome = ga_solve(src.calculate_distance_matrix_dataframe_points, curr_population=curr_population, depot_address=depot_address)
@@ -66,9 +118,8 @@ if __name__ == '__main__':
 
         costs_i, data_matrix = src.calculate_path_costs(chromosome, src.calculate_distance_matrix_dataframe_points)
         
-        # use when multiple iterations
         # src.print_cost(costs_i, i + 1, end_time - start_time)
-        src.print_phenotype(chromosome, src.calculate_distance_matrix_dataframe_points)
+        # src.print_phenotype(chromosome, src.calculate_distance_matrix_dataframe_points)
         total_cpu_time += end_time - start_time
 
         if chromosome.fitness > best_chromosome.fitness:
@@ -78,9 +129,31 @@ if __name__ == '__main__':
 
     print("\nBest result in detail\n")
     print("Total CPU Time: ", "{:.2f}".format(total_cpu_time), "s", sep="")
-    print("Total number of runs:", src.NO_EXPERIMENT_ITERATIONS)
-    print("Runtime of the algorithm for the best solution: ", "{:.2f}".format(best_chrom_runtime), "s", sep="")
+
+    # print("Total number of runs:", src.NO_EXPERIMENT_ITERATIONS)
+    # print("Runtime of the algorithm for the best solution: ", "{:.2f}".format(best_chrom_runtime), "s", sep="")
 
     src.print_phenotype(best_chromosome, src.calculate_distance_matrix_dataframe_points)
     src.print_single_vehicle_cost(costs_i)
-    src.plot_map(best_chromosome, costs_i, depot_address=(25.0, 25.0))
+
+
+
+    # # Tworzenie mapy
+    # m = folium.Map(location=depot_address, zoom_start=5) #im większy zoom start tym bliżej widać, location to bedzie nasz magazyn
+
+    # rgb_color = ['blue', 'gray', 'red', 'green', 'pink', 'orange', 'darkpurple', 'white', 'lightblue', 'beige', 'darkgreen']
+
+    # # Tworzenie liniowej trasy na podstawie koordynatów
+    # for i in range(len(best_chromosome.stops)):
+    #     folium.PolyLine(locations=final_df.iloc[i]["queue"], color=(rgb_color[final_df.iloc[i]["driver"] - 1])).add_to(m)
+
+    #     for coord in final_df.iloc[i]["queue"][1:-1]:
+    #         lat, lon = coord
+    #         folium.Marker(location=[lat, lon], icon=folium.Icon(icon= "car", color=rgb_color[final_df.iloc[i]["driver"] - 1])).add_to(m)
+
+    # lat, lon = final_df.iloc[0]["queue"][0]
+    # folium.Marker(location=[lat, lon], icon=folium.Icon(icon = "home", color="black")).add_to(m)
+
+    # m.save('mapa.html')
+
+    src.plot_map(best_chromosome, costs_i, depot_address=depot_address)

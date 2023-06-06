@@ -58,8 +58,6 @@ def create_random_addresses(num_points = POPULATION_SIZE):
     Returns:
         list: Exact addresses of orders
     """
-    os.chdir('..')
-    os.chdir('Data')
     with open("data.yaml", 'r', encoding='utf-8') as f:
         data = yaml.safe_load(f, )
 
