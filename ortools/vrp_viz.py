@@ -60,8 +60,7 @@ class VRPPlot():
         ne = coords_array.min(axis=0).tolist()
         sw = coords_array.max(axis=0).tolist()
         
-        plot = folium.Map(location=center, 
-                          tiles="Stamen Terrain")
+        plot = folium.Map(location=center)
 
         folium.Marker(
             location=self.coords[0],
